@@ -14,9 +14,9 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "D844D96B1D6CB2600042D692"
-               BuildableName = "WMF.framework"
-               BlueprintName = "WMF"
+               BlueprintIdentifier = "D8CE24D71E698E2400DAE2E0"
+               BuildableName = "Wikipedia Alpha.app"
+               BlueprintName = "Wikipedia Alpha"
                ReferencedContainer = "container:Wikipedia.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -40,6 +40,16 @@
       debugDocumentVersioning = "YES"
       debugServiceExtension = "internal"
       allowLocationSimulation = "YES">
+      <BuildableProductRunnable
+         runnableDebuggingMode = "0">
+         <BuildableReference
+            BuildableIdentifier = "primary"
+            BlueprintIdentifier = "D8CE24D71E698E2400DAE2E0"
+            BuildableName = "Wikipedia Alpha.app"
+            BlueprintName = "Wikipedia Alpha"
+            ReferencedContainer = "container:Wikipedia.xcodeproj">
+         </BuildableReference>
+      </BuildableProductRunnable>
    </LaunchAction>
    <ProfileAction
       buildConfiguration = "Release"
@@ -47,15 +57,16 @@
       savedToolIdentifier = ""
       useCustomWorkingDirectory = "NO"
       debugDocumentVersioning = "YES">
-      <MacroExpansion>
+      <BuildableProductRunnable
+         runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "D844D96B1D6CB2600042D692"
-            BuildableName = "WMF.framework"
-            BlueprintName = "WMF"
+            BlueprintIdentifier = "D8CE24D71E698E2400DAE2E0"
+            BuildableName = "Wikipedia Alpha.app"
+            BlueprintName = "Wikipedia Alpha"
             ReferencedContainer = "container:Wikipedia.xcodeproj">
          </BuildableReference>
-      </MacroExpansion>
+      </BuildableProductRunnable>
    </ProfileAction>
    <AnalyzeAction
       buildConfiguration = "Debug">
