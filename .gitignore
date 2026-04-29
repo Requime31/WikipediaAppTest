@@ -11,6 +11,7 @@
 *.bcsymbolmap
 *.version
 Carthage/Checkouts
+Carthage/Build/
 Carthage/Build/watchOS/
 Carthage/Build/Mac/
 Carthage/Build/tvOS/
