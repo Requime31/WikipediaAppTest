@@ -1277,6 +1277,52 @@ class PlacesViewController: ArticleLocationCollectionViewController, UISearchBar
         mapView.selectAnnotation(articlePlace, animated: articlePlace.identifier != previouslySelectedArticlePlaceIdentifier)
         previouslySelectedArticlePlaceIdentifier = articlePlace.identifier
     }
+    
+    func showCoordinates(_ coordinate: CLLocationCoordinate2D, title: String?) {
+        loadViewIfNeeded()
+        updateViewModeToMap()
+
+        let region = [coordinate].wmf_boundingRegion(with: 10000)
+        let location = CLLocation(latitude: coordinate.latitude, longitude: coordinate.longitude)
+
+        currentSearch = nil
+        currentSearchRegion = region
+        mapRegion = region
+
+        let deepLinkSearchResult: MWKSearchResult?
+        if let title, !title.isEmpty {
+            deepLinkSearchResult = MWKSearchResult(
+                articleID: 0,
+                revID: 0,
+                title: title,
+                displayTitle: title,
+                displayTitleHTML: nil,
+                wikidataDescription: nil,
+                extract: nil,
+                thumbnailURL: nil,
+                index: nil,
+                titleNamespace: nil,
+                location: location
+            )
+        } else {
+            deepLinkSearchResult = nil
+        }
+
+        currentSearch = PlaceSearch(
+            filter: currentSearchFilter,
+            type: .location,
+            origin: .system,
+            sortStyle: .links,
+            string: nil,
+            region: region,
+            localizedDescription: title ?? WMFLocalizedString(
+                "places-search-top-articles",
+                value: "All top articles",
+                comment: "A search suggestion for top articles"
+            ),
+            searchResult: deepLinkSearchResult
+        )
+    }
 
     // MARK: - Search History
 

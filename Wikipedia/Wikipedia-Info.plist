@@ -60,6 +60,16 @@
 				<string>wikipedia-official</string>
 			</array>
 		</dict>
+		<dict>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>CFBundleURLName</key>
+			<string>org.wikimedia.wikipedia.dev</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>wikipedia-dev</string>
+			</array>
+		</dict>
 	</array>
 	<key>CFBundleVersion</key>
 	<string>0</string>

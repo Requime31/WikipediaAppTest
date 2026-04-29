@@ -1,6 +1,7 @@
 import UIKit
 import BackgroundTasks
 import CocoaLumberjackSwift
+import CoreLocation
 
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     
@@ -18,9 +19,36 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     }
     
 #else
-
+    
+    private struct PlacesCoordinateDeepLink {
+        let latitude: Double
+        let longtitude: Double
+        let title: String?
+        
+        init?(url: URL) {
+            guard url.scheme == "wikipedia-dev",
+                  url.host == "places",
+                  let components = URLComponents(url: url, resolvingAgainstBaseURL: false),
+                  let latString = components.queryItems?.first(where: { $0.name == "lat" })?.value,
+                  let lonString = components.queryItems?.first(where: { $0.name == "lon" })?.value,
+                  let latitude = Double(latString),
+                  let longtitude = Double(lonString) else {
+                return nil
+            }
+            
+            self.latitude = latitude
+            self.longtitude = longtitude
+            self.title = components.queryItems?.first(where: { $0.name == "title" })?.value
+        }
+        
+        var coordinate: CLLocationCoordinate2D {
+            CLLocationCoordinate2D(latitude: latitude, longitude: longtitude)
+        }
+    }
+    
     var window: UIWindow?
     private var appNeedsResume = true
+    private var pendingPlacesDeepLink: PlacesCoordinateDeepLink?
 
     func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
 
@@ -54,8 +82,8 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     }
 
     func sceneDidBecomeActive(_ scene: UIScene) {
-
         resumeAppIfNecessary()
+        processPendingPlacesDeepLinkIfNeeded()
     }
 
     func sceneWillResignActive(_ scene: UIScene) {
@@ -133,6 +161,11 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
             return
         }
         
+        if let deepLink = PlacesCoordinateDeepLink(url: firstURL) {
+            pendingPlacesDeepLink = deepLink
+            return
+        }
+        
         guard let activity = NSUserActivity.wmf_activity(forWikipediaScheme: firstURL) ?? NSUserActivity.wmf_activity(for: firstURL) else {
             resumeAppIfNecessary()
             return
@@ -168,6 +201,40 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
             appViewController?.hideSplashScreenAndResumeApp()
             appNeedsResume = false
         }
+    }
+    
+    private func processPendingPlacesDeepLinkIfNeeded() {
+        guard
+            let deepLink = pendingPlacesDeepLink,
+            let appViewController
+        else {
+            return
+        }
+        
+        guard let placesIndex = appViewController.viewControllers?.firstIndex(where: { viewController in
+            let nav = viewController as? UINavigationController
+            return nav?.viewControllers.first is PlacesViewController
+        }) else {
+            DispatchQueue.main.async { [weak self] in
+                self?.processPendingPlacesDeepLinkIfNeeded()
+            }
+            return
+        }
+        appViewController.dismissPresentedViewControllers()
+        appViewController.selectedIndex = placesIndex
+        appViewController.currentNavigationController?.popToRootViewController(animated: false)
+        
+        guard let placesViewController = appViewController.currentNavigationController?.viewControllers.first as? PlacesViewController else {
+            DispatchQueue.main.async { [weak self] in
+                self?.processPendingPlacesDeepLinkIfNeeded()
+            }
+            return
+        }
+        
+        placesViewController.loadViewIfNeeded()
+        placesViewController.updateViewModeToMap()
+        placesViewController.showCoordinates(deepLink.coordinate, title: deepLink.title)
+        pendingPlacesDeepLink = nil
     }
     
 #endif
